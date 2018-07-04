@@ -18,10 +18,8 @@ class Album(Base):
     title = Column(String)
     release_date = Column(String)
     publisher = Column(String)
-    media_type = Column(String)
+    album_name = Column(String)
 
     
-    
-
 # create tables
 Base.metadata.create_all(engine)

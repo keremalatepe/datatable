@@ -11,5 +11,5 @@ class Album(db.Model):
     title = db.Column(db.String)
     release_date = db.Column(db.String)
     publisher = db.Column(db.String)
-    media_type = db.Column(db.String)
+    album_name = db.Column(db.String)
 

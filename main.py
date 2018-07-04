@@ -2,60 +2,27 @@
 
 from app import app
 from db_setup import init_db, db_session
-from forms import MusicSearchForm, AlbumForm
+from forms import AlbumForm
 from flask import flash, render_template, request, redirect
 from models import Album
-from tables import Results
+from flask_table import create_table
 
 init_db()
 
-
-
 @app.route('/', methods=['GET', 'POST'])
 def index():
-    search = MusicSearchForm(request.form)
-    if request.method == 'POST':
-        return search_results(search)
-
-    return render_template('index.html', form=search)
-
-
-@app.route('/results')
-def search_results(search):
     results = []
-    search_string = search.data['search']
-    if search_string:
-        if search.data['select'] == 'Artist':
-            qry = db_session.query(Album).filter(
-                Album.artist.contains(search_string))
-            results = qry.all()
-        elif search.data['select'] == 'Title':
-            qry = db_session.query(Album).filter(
-                Album.title.contains(search_string))
-            results = qry.all()
-        elif search.data['select'] == 'Publisher':
-            qry = db_session.query(Album).filter(
-                Album.publisher.contains(search_string))
-            results = qry.all()
-        elif search.data['select'] == 'Release Date':
-            qry = db_session.query(Album).filter(
-                Album.release_date.contains(search_string))
-            results = qry.all()
-        else:
-            qry = db_session.query(Album)
-            results = qry.all()
-    else:
-        qry = db_session.query(Album)
-        results = qry.all()
- 
-    if not results:
-        flash('No results found!')
-        return redirect('/')
-    else:
-        # display results
-        table = Results(results)
-        table.border = True
-        return render_template('results.html', table=table)
+    results = db_session.query(Album)
+
+    return render_template('results.html', table=results)
+
+@app.route('/versions', methods=['GET', 'POST'])
+def versions():
+    results = []
+    results = db_session.query(Album)
+
+    return render_template('versions.html', table=results)    
+
 
 
 @app.route('/new_album', methods=['GET', 'POST'])
@@ -65,7 +32,7 @@ def new_album():
     """
     form = AlbumForm(request.form)
 
-    if request.method == 'POST' and form.validate():
+    if request.method == 'POST':
         # save the album
         album = Album()
         save_changes(album, form, new=True)
@@ -74,23 +41,72 @@ def new_album():
 
     return render_template('new_album.html', form=form)
 
+
+def version_type(form):
+    k = 0
+    vers_type = 1
+    ctr1 = 0
+
+    for i in range(1,8):
+        ctr2 = 0
+        qry1 = db_session.query(Album).filter(Album.id == i)
+        album1 = qry1.first()
+        if k == 0:
+            if album1.title == form.title.data:
+                ctr1 += 1
+            if album1.release_date == form.release_date.data:
+                ctr1 += 1
+            if album1.publisher == form.publisher.data:
+                ctr1 += 1
+            if album1.album_name == form.album_name.data:
+                ctr1 += 1
+            k += 1
+        else:
+            if album1.title == form.title.data:
+                ctr2 += 1
+            if album1.release_date == form.release_date.data:
+                ctr2 += 1
+            if album1.publisher == form.publisher.data:
+                ctr2 += 1
+            if album1.album_name == form.album_name.data:
+                ctr2 += 1
+        if ctr2 > ctr1:
+            ctr1 = ctr2
+            vers_type = i
+
+    qry2 = db_session.query(Album).filter(Album.id == vers_type)
+    album1 = qry2.first()
+    return album1.artist
+
+
+
 def save_changes(album, form, new=False):
     """
     Save the changes to the database
     """
     # Get data from form and assign it to the correct attributes
     # of the SQLAlchemy table object
-    
-
-    album.artist = form.artist.data
-    album.title = form.title.data
-    album.release_date = form.release_date.data
-    album.publisher = form.publisher.data
-    album.media_type = form.media_type.data
-
     if new:
         # Add the new album to the database
+        album.artist = version_type(form)
+        album.title = form.title.data
+        album.release_date = form.release_date.data
+        album.publisher = form.publisher.data
+        album.album_name = form.album_name.data
         db_session.add(album)
+    else:
+        if album.id > 7:
+            album.artist = version_type(form)
+            album.title = form.title.data
+            album.release_date = form.release_date.data
+            album.publisher = form.publisher.data
+            album.album_name = form.album_name.data
+        else: 
+            album.artist = form.artist.data
+            album.title = form.title.data
+            album.release_date = form.release_date.data
+            album.publisher = form.publisher.data
+            album.album_name = form.album_name.data
 
     # commit the data to the database
     db_session.commit()
