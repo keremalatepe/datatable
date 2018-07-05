@@ -2,9 +2,9 @@ from sqlalchemy import create_engine, ForeignKey
 from sqlalchemy import Column, Date, Integer, String
 from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy.orm import relationship, backref
+from app import db
 
-
-engine = create_engine('sqlite:///mymusic.db', echo=True)
+engine = create_engine('postgresql://postgres:1234@localhost/baykar_proje', echo=True)
 Base = declarative_base()
 
 
