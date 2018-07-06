@@ -4,13 +4,13 @@
 	<meta http-equiv="X-UA-Compatible" content="ie=edge">
 	<link rel="stylesheet" href="/static/css/font-awesome.min.css">
 	<link rel="stylesheet" href="/static/css/bulma.css">	
-	<title>Edit Album - Flask Music Database</title>
+	<title>Edit Version - Flask Music Database</title>
 </head>
 <body>
 	<section class="hero is-primary">
         <div class="hero-body">
           <div class="container">
-            <h1 class="title">Edit Album</h1>
+            <h1 class="title">Edit Version</h1>
         	</br>
             <h2 class="subtitle"><a href="{{ url_for('.index') }}"> Click Here for Return Table </a></h2>
           </div>
@@ -20,9 +20,6 @@
 {% from "_formhelpers.html" import render_field %}
 <form method=post>
     <dl>
-        <div class="column is-2">
-            {{ render_field(form.name) }}
-        </div>
         <div class="column is-2">
         	{{ render_field(form.artist) }}
         </div>

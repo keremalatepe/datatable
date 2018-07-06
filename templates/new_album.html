@@ -20,6 +20,10 @@
 {% from "_formhelpers.html" import render_field %}
 <form method=post>
     <dl>
+
+        <div class="column is-2">
+            {{ render_field(form.name) }}
+        </div>
         <div class="column is-2">
         	{{ render_field(form.artist) }}
         </div>

@@ -14,12 +14,24 @@ class Album(Base):
     __tablename__ = "albums"
 
     id = Column(Integer, primary_key=True)
+    name = Column(String)
     artist = Column(String)
     title = Column(String)
     release_date = Column(String)
     publisher = Column(String)
     album_name = Column(String)
 
+
+class Version(Base):
+    """"""
+    __tablename__ = "versions"
+
+    id = Column(Integer, primary_key=True)
+    artist = Column(String)
+    title = Column(String)
+    release_date = Column(String)
+    publisher = Column(String)
+    album_name = Column(String)
     
 # create tables
 Base.metadata.create_all(engine)

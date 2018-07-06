@@ -33,48 +33,70 @@
   	
   	$(document).ready( function () {
   		$('#albums thead th').each( function () {
-        	var title = $(this).text();
-        	$(this).html( '<a>'+title+'</a></br><input type="text"/>' );
-    	} );
-		var table = $('#albums').DataTable(
-			{
-			dom: 'Bfrtip',
-        	buttons: [
-        	'copy', 'csv', 'excel', 'pdf', 'print'
-			],
-			fixedColumns: {leftColumns: 1},
-           'sPaginationType': 'ellipses',
-           "scrollX": true
-   		} );
-		$('#albums tbody')
-        .on( 'mouseenter', 'td', function () {
-            var colIdx = table.cell(this).index().column;
- 
-            $( table.cells().nodes() ).removeClass( 'highlight' );
-            $( table.column( colIdx ).nodes() ).addClass( 'highlight' );
-        } );
-        $('#albums tbody').on( 'click', 'tr', function () {
-		      	$(this).toggleClass('selected');
-		   } );
+          var title = $(this).text();
+          $(this).html( title + '</br><input type="text" class="input is-rounded is-small"   placeholder="Search '+title+'" style="width:80px"/>' );
+      } );
+		  var table = $('#albums').DataTable(
+  			{
+    			dom: 'Bfrtip',
+          buttons: {
+            buttons: [
+            	{extend:'copy'},
+              {extend:'csv'},
+              {extend:'pdfHtml5'}
+            ]
+          },
+    			fixedColumns: {leftColumns: 1},
+          'sPaginationType': 'ellipses',
+          "scrollX": true
+       	} );
+    	$('#albums tbody')
+          .on( 'mouseenter', 'td', function () {
+              var colIdx = table.cell(this).index().column;
+   
+              $( table.cells().nodes() ).removeClass( 'highlight' );
+              $( table.column( colIdx ).nodes() ).addClass( 'highlight' );
+          } );
+      $('#albums tbody').on( 'click', 'tr', function () {
+  		  	$(this).toggleClass('selected');
+  		} );
+      $("#btn-show-selected").on('click', function(){
+      $.fn.dataTable.ext.search.push(
+          function (settings, data, dataIndex){             
+              return ($(table.row(dataIndex).node()).hasClass('selected')) ? true : false;
+          }
+      );
+        
+      table.draw();
+        
+      $.fn.dataTable.ext.search.pop();
+      });
+
+      $("#btn-show-all").on('click', function(){
+          table.draw();
+      });
 		
 
-		table.columns().every( function () {
-	        var that = this;
-	 		$('#tst').click( function () {
-        	 alert(table.rows('.selected').data().toArray());
-    		} );
-	        $( 'input', this.header() ).on( 'keyup change', function () {
-	            if ( that.search() !== this.value ) {
-	                that
-	                    .search( this.value )
-	                    .draw();
-            	}
-        	} );
+  		table.columns().every( function () {
+  	        var that = this;
+  	        $( 'input', this.header() ).on( 'keyup change', function () {
+  	            if ( that.search() !== this.value ) {
+  	                that
+  	                    .search( this.value )
+  	                    .draw();
+              	}
+          	} );
 
-    	} );
-	} );
+      	} );
+	    } );
+
+    
   </script>
-  <title>Flask Versions Database</title>
+  <title>---Hizmete Özel--- 
+
+
+    
+  Flask Versions Database</title>
 </head>
 <body>
 	<section class="hero is-primary">
@@ -82,38 +104,48 @@
           <div class="container">
             <h1 class="title">Versions of Albums</h1>
         	</br>
-            <h2 class="subtitle"><a href="{{ url_for('.new_album') }}"> Click Here for New Album </a></h2>
+            <h2 class="subtitle"><a href="{{ url_for('.new_version') }}"> Click Here for New Version </a></h2>
             <h2 class="subtitle"><a href="{{ url_for('.index') }}"> Click Here for Table </a></h2>
           </div>
         </div>
       </section>
-	
+	</br>
 	<div>
-		<button id="tst">click</button>
+    <div class="row text-right" style="text-align: center;">
+    <button class="btn btn-primary button is-primary" id="btn-show-selected"> Show only Selected</button>
+    <button class="btn btn-primary button is-primary" id="btn-show-all"> Show All</button>    
+    </div>
+		<!--<button id="tst">click</button>-->
 		<table id="albums" class="row-border hover order-column table is-bordered display nowrap" style="width:100%">
 	        <thead>
-	            <th>Artist</th>
-	            <th>Title</th>
-	            <th>Release Date</th>
-	            <th>Publisher</th>
-	        	<th>Album Name</th>
-	        	<th>Edit</th>
+	            <th style="text-align:center">Artist</th>
+              <th style="text-align:center">Title</th>
+              <th style="text-align:center">Release Date</th>
+              <th style="text-align:center">Publisher</th>
+              <th style="text-align:center">Album Name</th>
+              <th style="text-align:center">Edit</th>
 	       	</thead>
 	        <tbody> 
 	        {% for row in table %}
-	            {% if loop.index < 8 %}
-		            <tr>
-		               <td>{{row["artist"]}}</td>
-		               <td>{{row["title"]}}</td>
-		               <td>{{row["release_date"]}}</td>
-		               <td>{{row["publisher"]}}</td>
-		               <td>{{row["album_name"]}}</td>
-		               <td><a href='/item/{{row["id"]}}'>Edit</a></td>
-		            </tr>
-	        	{% endif %} 
+	            <tr>
+                 <td>{{row["artist"]}}</td>
+	               <td>{{row["title"]}}</td>
+	               <td>{{row["release_date"]}}</td>
+	               <td>{{row["publisher"]}}</td>
+	               <td>{{row["album_name"]}}</td>
+	               <td><a href='/item/version/{{row["id"]}}'>Edit</a></td>
+	            </tr>
 	        {% endfor %}
 	        </tbody>
+          <tfoot>
+              <th style="text-align:center">Artist</th>
+              <th style="text-align:center">Title</th>
+              <th style="text-align:center">Release Date</th>
+              <th style="text-align:center">Publisher</th>
+              <th style="text-align:center">Album Name</th>
+              <th style="text-align:center">Edit</th>
+          </tfoot>
       	</table>
     </div>
-
+    
 </body>
