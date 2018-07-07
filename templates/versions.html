@@ -31,66 +31,82 @@
   <script src="static/js/datatables.net/js/ellipses.js"></script>
   <script>
   	
-  	$(document).ready( function () {
-  		$('#albums thead th').each( function () {
+$(document).ready( function () {
+      //sutun sutun aramak icin
+      $('#albums thead th').each( function () { 
           var title = $(this).text();
           $(this).html( title + '</br><input type="text" class="input is-rounded is-small"   placeholder="Search '+title+'" style="width:80px"/>' );
       } );
-		  var table = $('#albums').DataTable(
-  			{
-    			dom: 'Bfrtip',
-          buttons: {
+      var table = $('#albums').DataTable(
+        {
+          
+          dom: 'Bfrtip',
+          lengthMenu: [
+            [ 10, 25, 50, -1 ],
+            [ '10 rows', '25 rows', '50 rows', 'Show all' ]
+          ],
+          //indirme butonlari
+          buttons: {                           
             buttons: [
-            	{extend:'copy'},
+              {extend:'pageLength', text:'Change Length' },
+              {extend:'copy'},
               {extend:'csv'},
               {extend:'pdfHtml5'}
             ]
           },
-    			fixedColumns: {leftColumns: 1},
+
+          //sutunlari saga sola kaydirirken sabitleyebilmek icin
+          fixedColumns: {leftColumns: 1}, 
+          //sayfa numaralarinin goruntusu     
           'sPaginationType': 'ellipses',
+          // yatay kaydirmayi aktiflestirmek
           "scrollX": true
-       	} );
-    	$('#albums tbody')
+        } );
+      //tiklanilan satirin koyu renk olmasi
+      $('#albums tbody')
           .on( 'mouseenter', 'td', function () {
               var colIdx = table.cell(this).index().column;
    
               $( table.cells().nodes() ).removeClass( 'highlight' );
               $( table.column( colIdx ).nodes() ).addClass( 'highlight' );
           } );
+      //tiklanilan satirin secilmesi
       $('#albums tbody').on( 'click', 'tr', function () {
-  		  	$(this).toggleClass('selected');
-  		} );
+          $(this).toggleClass('selected');
+      } );
+      //secilen satirlarin gosterilmesi
       $("#btn-show-selected").on('click', function(){
-      $.fn.dataTable.ext.search.push(
-          function (settings, data, dataIndex){             
-              return ($(table.row(dataIndex).node()).hasClass('selected')) ? true : false;
-          }
-      );
+          $.fn.dataTable.ext.search.push(
+              function (settings, data, dataIndex){             
+                  return ($(table.row(dataIndex).node()).hasClass('selected')) ? true : false;
+              }
+          );
         
-      table.draw();
+          table.draw();
         
-      $.fn.dataTable.ext.search.pop();
+          $.fn.dataTable.ext.search.pop();
       });
-
+      //tum satirlarin gosterilmesi
       $("#btn-show-all").on('click', function(){
           table.draw();
       });
-		
-
-  		table.columns().every( function () {
-  	        var that = this;
-  	        $( 'input', this.header() ).on( 'keyup change', function () {
-  	            if ( that.search() !== this.value ) {
-  	                that
-  	                    .search( this.value )
-  	                    .draw();
-              	}
-          	} );
-
-      	} );
-	    } );
-
     
+      //sutun sutun arama kisminin devami 
+      table.columns().every( function () {
+            var that = this;
+            $( 'input', this.header() ).on( 'keyup change', function () {
+                if ( that.search() !== this.value ) {
+                    that
+                        .search( this.value )
+                        .draw();
+                }
+            } );
+
+        } );
+    
+
+    } );
+ 
   </script>
   <title>---Hizmete Özel--- 
 
@@ -102,9 +118,9 @@
 	<section class="hero is-primary">
         <div class="hero-body">
           <div class="container">
-            <h1 class="title">Versions of Albums</h1>
+            <h1 class="title">Configurations of Albums</h1>
         	</br>
-            <h2 class="subtitle"><a href="{{ url_for('.new_version') }}"> Click Here for New Version </a></h2>
+            <h2 class="subtitle"><a href="{{ url_for('.new_version') }}"> Click Here for New Configuration </a></h2>
             <h2 class="subtitle"><a href="{{ url_for('.index') }}"> Click Here for Table </a></h2>
           </div>
         </div>

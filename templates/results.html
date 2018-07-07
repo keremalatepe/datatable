@@ -31,25 +31,38 @@
   <script src="static/js/datatables.net/js/fixedColumns.js"></script>
   <script src="static/js/datatables.net/js/ellipses.js"></script>
   <script>
+
+
     $(document).ready( function () {
-      $('#albums thead th').each( function () {
+      //sutun sutun aramak icin
+      $('#albums thead th').each( function () { 
           var title = $(this).text();
           $(this).html( title + '</br><input type="text" class="input is-rounded is-small"   placeholder="Search '+title+'" style="width:80px"/>' );
       } );
       var table = $('#albums').DataTable(
         {
           dom: 'Bfrtip',
-          buttons: {
+          lengthMenu: [
+            [ 10, 25, 50, -1 ],
+            [ '10 rows', '25 rows', '50 rows', 'Show all' ]
+          ],
+          //indirme butonlari
+          buttons: {                           
             buttons: [
+              {extend:'pageLength', text:'Change Length' },
               {extend:'copy'},
               {extend:'csv'},
               {extend:'pdfHtml5'}
             ]
           },
-          fixedColumns: {leftColumns: 1},
+          //sutunlari saga sola kaydirirken sabitleyebilmek icin
+          fixedColumns: {leftColumns: 1}, 
+          //sayfa numaralarinin goruntusu     
           'sPaginationType': 'ellipses',
+          // yatay kaydirmayi aktiflestirmek
           "scrollX": true
         } );
+      //tiklanilan satirin koyu renk olmasi
       $('#albums tbody')
           .on( 'mouseenter', 'td', function () {
               var colIdx = table.cell(this).index().column;
@@ -57,26 +70,28 @@
               $( table.cells().nodes() ).removeClass( 'highlight' );
               $( table.column( colIdx ).nodes() ).addClass( 'highlight' );
           } );
+      //tiklanilan satirin secilmesi
       $('#albums tbody').on( 'click', 'tr', function () {
           $(this).toggleClass('selected');
       } );
+      //secilen satirlarin gosterilmesi
       $("#btn-show-selected").on('click', function(){
-      $.fn.dataTable.ext.search.push(
-          function (settings, data, dataIndex){             
-              return ($(table.row(dataIndex).node()).hasClass('selected')) ? true : false;
-          }
-      );
+          $.fn.dataTable.ext.search.push(
+              function (settings, data, dataIndex){             
+                  return ($(table.row(dataIndex).node()).hasClass('selected')) ? true : false;
+              }
+          );
         
-      table.draw();
+          table.draw();
         
-      $.fn.dataTable.ext.search.pop();
+          $.fn.dataTable.ext.search.pop();
       });
-
+      //tum satirlarin gosterilmesi
       $("#btn-show-all").on('click', function(){
           table.draw();
       });
     
-
+      //sutun sutun arama kisminin devami 
       table.columns().every( function () {
             var that = this;
             $( 'input', this.header() ).on( 'keyup change', function () {
@@ -88,7 +103,9 @@
             } );
 
         } );
-      } );
+    
+
+    } );
 
     
   </script>
@@ -104,7 +121,7 @@
             <h1 class="title">Data Table</h1>
         	</br>
             <h2 class="subtitle"><a href="{{ url_for('.new_album') }}"> Click Here for New Album </a></h2>
-            <h2 class="subtitle"><a href="{{ url_for('.versions') }}"> Click Here for Versions </a></h2>
+            <h2 class="subtitle"><a href="{{ url_for('.versions') }}"> Click Here for Configurations </a></h2>
           </div>
         </div>
       </section>
