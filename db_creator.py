@@ -22,9 +22,9 @@ class Album(Base):
     album_name = Column(String)
 
 
-class Version(Base):
+class Configuration(Base):
     """"""
-    __tablename__ = "versions"
+    __tablename__ = "configurations"
 
     id = Column(Integer, primary_key=True)
     artist = Column(String)

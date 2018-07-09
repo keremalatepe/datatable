@@ -15,9 +15,9 @@ class Album(db.Model):
     album_name = db.Column(db.String)
 
 
-class Version(db.Model):
+class Configuration(db.Model):
     """"""
-    __tablename__ = "versions"
+    __tablename__ = "configurations"
 
     id = db.Column(db.Integer, primary_key=True)
     artist = db.Column(db.String)

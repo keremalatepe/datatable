@@ -41,6 +41,7 @@ $(document).ready( function () {
         {
           
           dom: 'Bfrtip',
+          //sayfada gosterilen satir sayisini ayarlamak
           lengthMenu: [
             [ 10, 25, 50, -1 ],
             [ '10 rows', '25 rows', '50 rows', 'Show all' ]
@@ -112,7 +113,7 @@ $(document).ready( function () {
 
 
     
-  Flask Versions Database</title>
+  Flask Configurations Database</title>
 </head>
 <body>
 	<section class="hero is-primary">
@@ -120,7 +121,7 @@ $(document).ready( function () {
           <div class="container">
             <h1 class="title">Configurations of Albums</h1>
         	</br>
-            <h2 class="subtitle"><a href="{{ url_for('.new_version') }}"> Click Here for New Configuration </a></h2>
+            <h2 class="subtitle"><a href="{{ url_for('.new_configuration') }}"> Click Here for New Configuration </a></h2>
             <h2 class="subtitle"><a href="{{ url_for('.index') }}"> Click Here for Table </a></h2>
           </div>
         </div>
@@ -149,7 +150,7 @@ $(document).ready( function () {
 	               <td>{{row["release_date"]}}</td>
 	               <td>{{row["publisher"]}}</td>
 	               <td>{{row["album_name"]}}</td>
-	               <td><a href='/item/version/{{row["id"]}}'>Edit</a></td>
+	               <td><a href='/item/configuration/{{row["id"]}}'>Edit</a></td>
 	            </tr>
 	        {% endfor %}
 	        </tbody>

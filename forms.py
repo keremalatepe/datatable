@@ -11,7 +11,7 @@ class AlbumForm(Form):
 	publisher = StringField('Publisher')
 	album_name = StringField('Album Name')
 
-class VersionForm(Form):
+class ConfigurationForm(Form):
 
 	artist = StringField('Artist')
 	title = StringField('Title')
