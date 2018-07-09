@@ -41,7 +41,7 @@ def new_album():
 
     return render_template('new_album.html', form=form)
 
-
+#conf eklendiginde data tablosunun guncellenebilmesi icin fonksiyon
 def reload_table():
     i = 1
     q = True
@@ -55,6 +55,9 @@ def reload_table():
         album.name = reload_table_type(album)
         db_session.commit()
 
+
+#conf eklendiginde tek tek tum conflarla karsilastirmasi icin fonksiyon. 
+#conf_type() fonksiyonunun aynisi
 def reload_table_type(form):
     k = 0
     conf_type = 1
@@ -100,7 +103,7 @@ def reload_table_type(form):
     return configuration1.artist
 
 
-
+#yeni conf eklemek icin
 @app.route('/new_configuration', methods=['GET', 'POST'])
 def new_configuration():
     """
@@ -117,7 +120,8 @@ def new_configuration():
     return render_template('new_configuration.html', form=form)
 
 
-
+#data table a element eklerken veya guncellerken conf tipini belirlemek icin 
+#tek tek her biriyle benzer olan eleman sayisina bakip en cok benzeyeni donduruyor
 def configuration_type(form):
     k = 0
     conf_type = 1
@@ -162,13 +166,9 @@ def configuration_type(form):
     configuration1 = qry2.first()
     return configuration1.artist
 
-
+#datatable a yeni eklenen veya guncellenen verinin kaydedilmesi icin
 def save_changes(album, form, new=False):
-    """
-    Save the changes to the database
-    """
-    # Get data from form and assign it to the correct attributes
-    # of the SQLAlchemy table object
+
     if new:
         # Add the new album to the database
         album.artist = form.artist.data
@@ -189,19 +189,16 @@ def save_changes(album, form, new=False):
     # commit the data to the database
     db_session.commit()
 
+#conf tablea a yeni eklenen veya guncellenen verinin kaydedilmesi icin
 def save_changes_configuration(configuration, form, new=False):
-    """
-    Save the changes to the database
-    """
-    # Get data from form and assign it to the correct attributes
-    # of the SQLAlchemy table object
+
     if new:
-        # Add the new album to the database
         configuration.artist = form.artist.data
         configuration.title = form.title.data
         configuration.release_date = form.release_date.data
         configuration.publisher = form.publisher.data
         configuration.album_name = form.album_name.data
+        #database e ekliyor
         db_session.add(configuration)
     else:
      
@@ -211,10 +208,13 @@ def save_changes_configuration(configuration, form, new=False):
         configuration.publisher = form.publisher.data
         configuration.album_name = form.album_name.data
 
-    # commit the data to the database
+    #databasede paylasiyor
     db_session.commit()
+    #datatable in goncellenmesi icin fonksiyon cagiriliyor
     reload_table()
 
+
+#datatable editlemesi icin fonksiyon
 @app.route('/item/<int:id>', methods=['GET', 'POST'])
 def edit(id):
     qry = db_session.query(Album).filter(Album.id==id)
@@ -230,6 +230,7 @@ def edit(id):
     else:
         return 'Error loading #{id}'.format(id=id)
 
+#conf table editlenmesi icin fonksiyon
 @app.route('/item/configuration/<int:id>', methods=['GET', 'POST'])
 def edit_configuration(id):
     qry = db_session.query(Configuration).filter(
@@ -239,7 +240,6 @@ def edit_configuration(id):
     if configuration:
         form = ConfigurationForm(formdata=request.form, obj=configuration)
         if request.method == 'POST' and form.validate():
-            # save edits
             save_changes_configuration(configuration, form)
             return redirect('/configurations')
         return render_template('edit_configuration.html', form=form)

@@ -3,7 +3,7 @@
 <head>
   <style>
   	td.highlight {
-    	background-color: whitesmoke !important;
+    	background-color: #B0BED9 !important;
 	}
 	div.dataTables_wrapper {
         margin: 0 auto;
@@ -49,7 +49,7 @@ $(document).ready( function () {
           //indirme butonlari
           buttons: {                           
             buttons: [
-              {extend:'pageLength', text:'Change Length' },
+              {extend:'pageLength', text:'Show 10 Rows' },
               {extend:'copy'},
               {extend:'csv'},
               {extend:'pdfHtml5'}
@@ -150,7 +150,7 @@ $(document).ready( function () {
 	               <td>{{row["release_date"]}}</td>
 	               <td>{{row["publisher"]}}</td>
 	               <td>{{row["album_name"]}}</td>
-	               <td><a href='/item/configuration/{{row["id"]}}'>Edit</a></td>
+	               <td><a href='/item/configuration/{{row["id"]}}' style="color : #6a5acd">Edit</a></td>
 	            </tr>
 	        {% endfor %}
 	        </tbody>
