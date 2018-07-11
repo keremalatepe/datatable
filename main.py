@@ -44,22 +44,6 @@ def new_album():
 
     return render_template('new_album.html', form=form)
 
-#conf eklendiginde data tablosunun guncellenebilmesi icin fonksiyon
-def reload_table():
-    i = 1
-    q = True
-    while q:
-        qry = db_session.query(Album).filter(Album.id==i)
-        album = qry.first()
-        
-        if album is None:
-            q = False
-            continue
-        album1 = object_as_dict(album)
-        i += 1
-        album.name = configuration_type(album1)
-        db_session.commit()
-
 
 #yeni conf eklemek icin
 @app.route('/new_configuration', methods=['GET', 'POST'])
@@ -76,6 +60,40 @@ def new_configuration():
         return redirect('/configurations')
 
     return render_template('new_configuration.html', form=form)
+
+
+#datatable editlemesi icin fonksiyon
+@app.route('/item/<int:id>', methods=['GET', 'POST'])
+def edit(id):
+    qry = db_session.query(Album).filter(Album.id==id)
+    album = qry.first()
+
+    if album:
+        form = AlbumForm(formdata=request.form, obj=album)
+        if request.method == 'POST' and form.validate():
+            # save edits
+            save_changes(album, form)
+            return redirect('/')
+        return render_template('edit_album.html', form=form)
+    else:
+        return 'Error loading #{id}'.format(id=id)
+
+
+#conf table editlenmesi icin fonksiyon
+@app.route('/item/configuration/<int:id>', methods=['GET', 'POST'])
+def edit_configuration(id):
+    qry = db_session.query(Configuration).filter(
+                Configuration.id==id)
+    configuration = qry.first()
+
+    if configuration:
+        form = ConfigurationForm(formdata=request.form, obj=configuration)
+        if request.method == 'POST' and form.validate():
+            save_changes_configuration(configuration, form)
+            return redirect('/configurations')
+        return render_template('edit_configuration.html', form=form)
+    else:
+        return 'Error loading #{id}'.format(id=id)
 
 
 #data table a element eklerken veya guncellerken conf tipini belirlemek icin 
@@ -105,42 +123,26 @@ def configuration_type(form):
             conf_type = i
         i+=1
 
-
     qry2 = db_session.query(Configuration).filter(Configuration.id == conf_type)
     configuration1 = qry2.first()
     return configuration1.artist
 
 
-#datatable a yeni eklenen veya guncellenen verinin kaydedilmesi icin
-def save_changes(album, form, new=False):
-
-    if new:
-        # Add the new album to the database
-        form_data = dict((key, request.form.get(key)) for key in request.form.keys())
-        a = object_as_dict(album)
-        form_data["name"] = configuration_type(form_data)
-        for key in set(form_data) & set(a):
-            a[key] = form_data[key]
-        for key, value in a.items():
-            setattr(album, key, value)
-
-        db_session.add(album)
-    else:
-
-        form_data = dict((key, request.form.get(key)) for key in request.form.keys())
-        a = object_as_dict(album)
-        form_data["name"] = configuration_type(form_data)
-        for key in set(form_data) & set(a):
-            a[key] = form_data[key]
-        qry3 = db_session.query(Album).get(a["id"])
-
-        for key, value in a.items():
-            setattr(qry3, key, value)
+#conf eklendiginde data tablosunun guncellenebilmesi icin fonksiyon
+def reload_table():
+    i = 1
+    q = True
+    while q:
+        qry = db_session.query(Album).filter(Album.id==i)
+        album = qry.first()
         
-        
-        
-    # commit the data to the database
-    db_session.commit()
+        if album is None:
+            q = False
+            continue
+        album1 = object_as_dict(album)
+        i += 1
+        album.name = configuration_type(album1)
+        db_session.commit()
 
 #conf tablea a yeni eklenen veya guncellenen verinin kaydedilmesi icin
 def save_changes_configuration(configuration, form, new=False):
@@ -173,37 +175,36 @@ def object_as_dict(obj):
     return {c.key: getattr(obj, c.key)
             for c in inspect(obj).mapper.column_attrs}
 
-#datatable editlemesi icin fonksiyon
-@app.route('/item/<int:id>', methods=['GET', 'POST'])
-def edit(id):
-    qry = db_session.query(Album).filter(Album.id==id)
-    album = qry.first()
 
-    if album:
-        form = AlbumForm(formdata=request.form, obj=album)
-        if request.method == 'POST' and form.validate():
-            # save edits
-            save_changes(album, form)
-            return redirect('/')
-        return render_template('edit_album.html', form=form)
+
+#datatable a yeni eklenen veya guncellenen verinin kaydedilmesi icin
+def save_changes(album, form, new=False):
+
+    if new:
+        # Add the new album to the database
+        form_data = dict((key, request.form.get(key)) for key in request.form.keys())
+        a = object_as_dict(album)
+        form_data["name"] = configuration_type(form_data)
+        for key in set(form_data) & set(a):
+            a[key] = form_data[key]
+        for key, value in a.items():
+            setattr(album, key, value)
+
+        db_session.add(album)
     else:
-        return 'Error loading #{id}'.format(id=id)
 
-#conf table editlenmesi icin fonksiyon
-@app.route('/item/configuration/<int:id>', methods=['GET', 'POST'])
-def edit_configuration(id):
-    qry = db_session.query(Configuration).filter(
-                Configuration.id==id)
-    configuration = qry.first()
+        form_data = dict((key, request.form.get(key)) for key in request.form.keys())
+        a = object_as_dict(album)
+        form_data["name"] = configuration_type(form_data)
+        for key in set(form_data) & set(a):
+            a[key] = form_data[key]
+        qry3 = db_session.query(Album).get(a["id"])
 
-    if configuration:
-        form = ConfigurationForm(formdata=request.form, obj=configuration)
-        if request.method == 'POST' and form.validate():
-            save_changes_configuration(configuration, form)
-            return redirect('/configurations')
-        return render_template('edit_configuration.html', form=form)
-    else:
-        return 'Error loading #{id}'.format(id=id)
+        for key, value in a.items():
+            setattr(qry3, key, value)
+        
+    # commit the data to the database
+    db_session.commit()
 
 
 if __name__ == '__main__':
