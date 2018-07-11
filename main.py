@@ -5,7 +5,10 @@ from db_setup import init_db, db_session
 from forms import AlbumForm, ConfigurationForm
 from flask import flash, render_template, request, redirect
 from models import Album, Configuration
+import models
 from flask_table import create_table
+from sqlalchemy import inspect
+
 
 init_db()
 
@@ -48,59 +51,14 @@ def reload_table():
     while q:
         qry = db_session.query(Album).filter(Album.id==i)
         album = qry.first()
+        
         if album is None:
             q = False
             continue
+        album1 = object_as_dict(album)
         i += 1
-        album.name = reload_table_type(album)
+        album.name = configuration_type(album1)
         db_session.commit()
-
-
-#conf eklendiginde tek tek tum conflarla karsilastirmasi icin fonksiyon. 
-#conf_type() fonksiyonunun aynisi
-def reload_table_type(form):
-    k = 0
-    conf_type = 1
-    ctr1 = 0
-    i = 1
-    q = True
-    while q:
-        
-        qry1 = db_session.query(Configuration).filter(Configuration.id == i)
-        configuration1 = qry1.first()
-        if configuration1 is None:
-            q = False
-            continue
-
-        ctr2 = 0
-        if k == 0:
-            if configuration1.title == form.title:
-                ctr1 += 1
-            if configuration1.release_date == form.release_date:
-                ctr1 += 1
-            if configuration1.publisher == form.publisher:
-                ctr1 += 1
-            if configuration1.album_name == form.album_name:
-                ctr1 += 1
-            k += 1
-        else:
-            if configuration1.title == form.title:
-                ctr2 += 1
-            if configuration1.release_date == form.release_date:
-                ctr2 += 1
-            if configuration1.publisher == form.publisher:
-                ctr2 += 1
-            if configuration1.album_name == form.album_name:
-                ctr2 += 1
-        if ctr2 > ctr1:
-            ctr1 = ctr2
-            conf_type = i
-        i+=1
-
-
-    qry2 = db_session.query(Configuration).filter(Configuration.id == conf_type)
-    configuration1 = qry2.first()
-    return configuration1.artist
 
 
 #yeni conf eklemek icin
@@ -128,34 +86,20 @@ def configuration_type(form):
     ctr1 = 0
     i = 1
     q = True
+
     while q:
-        
         qry1 = db_session.query(Configuration).filter(Configuration.id == i)
         configuration1 = qry1.first()
         if configuration1 is None:
             q = False
             continue
-
         ctr2 = 0
-        if k == 0:
-            if configuration1.title == form.title.data:
-                ctr1 += 1
-            if configuration1.release_date == form.release_date.data:
-                ctr1 += 1
-            if configuration1.publisher == form.publisher.data:
-                ctr1 += 1
-            if configuration1.album_name == form.album_name.data:
-                ctr1 += 1
-            k += 1
-        else:
-            if configuration1.title == form.title.data:
-                ctr2 += 1
-            if configuration1.release_date == form.release_date.data:
-                ctr2 += 1
-            if configuration1.publisher == form.publisher.data:
-                ctr2 += 1
-            if configuration1.album_name == form.album_name.data:
-                ctr2 += 1
+
+        a1 = object_as_dict(configuration1)
+        for key in set(a1) & set(form):
+            if a1[key] == form[key]:
+                ctr2+=1       
+
         if ctr2 > ctr1:
             ctr1 = ctr2
             conf_type = i
@@ -166,25 +110,34 @@ def configuration_type(form):
     configuration1 = qry2.first()
     return configuration1.artist
 
+
 #datatable a yeni eklenen veya guncellenen verinin kaydedilmesi icin
 def save_changes(album, form, new=False):
 
     if new:
         # Add the new album to the database
-        album.artist = form.artist.data
-        album.name = configuration_type(form)
-        album.title = form.title.data
-        album.release_date = form.release_date.data
-        album.publisher = form.publisher.data
-        album.album_name = form.album_name.data
+        form_data = dict((key, request.form.get(key)) for key in request.form.keys())
+        a = object_as_dict(album)
+        form_data["name"] = configuration_type(form_data)
+        for key in set(form_data) & set(a):
+            a[key] = form_data[key]
+        for key, value in a.items():
+            setattr(album, key, value)
+
         db_session.add(album)
     else:
-        album.artist = form.artist.data
-        album.name = configuration_type(form)
-        album.title = form.title.data
-        album.release_date = form.release_date.data
-        album.publisher = form.publisher.data
-        album.album_name = form.album_name.data
+
+        form_data = dict((key, request.form.get(key)) for key in request.form.keys())
+        a = object_as_dict(album)
+        form_data["name"] = configuration_type(form_data)
+        for key in set(form_data) & set(a):
+            a[key] = form_data[key]
+        qry3 = db_session.query(Album).get(a["id"])
+
+        for key, value in a.items():
+            setattr(qry3, key, value)
+        
+        
         
     # commit the data to the database
     db_session.commit()
@@ -193,26 +146,32 @@ def save_changes(album, form, new=False):
 def save_changes_configuration(configuration, form, new=False):
 
     if new:
-        configuration.artist = form.artist.data
-        configuration.title = form.title.data
-        configuration.release_date = form.release_date.data
-        configuration.publisher = form.publisher.data
-        configuration.album_name = form.album_name.data
+        form_data = dict((key, request.form.get(key)) for key in request.form.keys())
+        a = object_as_dict(configuration)
+        for key in set(form_data) & set(a):
+            a[key] = form_data[key]
+        for key, value in a.items():
+            setattr(configuration, key, value)
         #database e ekliyor
         db_session.add(configuration)
     else:
      
-        configuration.artist = form.artist.data
-        configuration.title = form.title.data
-        configuration.release_date = form.release_date.data
-        configuration.publisher = form.publisher.data
-        configuration.album_name = form.album_name.data
+        form_data = dict((key, request.form.get(key)) for key in request.form.keys())
+        a = object_as_dict(configuration)
+        for key in set(form_data) & set(a):
+            a[key] = form_data[key]
+        for key, value in a.items():
+            setattr(configuration, key, value)
 
     #databasede paylasiyor
     db_session.commit()
     #datatable in goncellenmesi icin fonksiyon cagiriliyor
     reload_table()
 
+
+def object_as_dict(obj):
+    return {c.key: getattr(obj, c.key)
+            for c in inspect(obj).mapper.column_attrs}
 
 #datatable editlemesi icin fonksiyon
 @app.route('/item/<int:id>', methods=['GET', 'POST'])

@@ -1,7 +1,6 @@
 from app import db
 
 
-
 class Album(db.Model):
     """"""
     __tablename__ = "albums"
