@@ -24,7 +24,7 @@
   <script src="static/js/datatables.net/js/jquery.dataTables.min.js"></script>
   <script src="static/js/datatables.net-buttons/js/dataTables.buttons.min.js"></script>
   <script src="static/js/datatables.net-buttons/js/buttons.html5.min.js"></script>
-   <script src="static/js/datatables.net-buttons/js/buttons.print.min.js"></script>
+  <script src="static/js/datatables.net-buttons/js/buttons.print.min.js"></script>
   <script src="static/js/datatables.net-buttons/js/pdfmake.min.js"></script>
   <script src="static/js/datatables.net-buttons/js/vfs_fonts.js"></script>
   <script src="static/js/datatables.net-buttons/js/buttons.flash.min.js"></script>
@@ -56,7 +56,7 @@
               {extend:'pdfHtml5'}
             ]
           },
-          
+
           //sutunlari saga sola kaydirirken sabitleyebilmek icin
           fixedColumns: {leftColumns: 0}, 
           //sayfa numaralarinin goruntusu     
@@ -105,10 +105,7 @@
             } );
 
         } );
-    
-
     } );
-
     
   </script>
   <title>---Hizmete Özel--- 
@@ -117,7 +114,7 @@
   Flask Albums Database</title>
 </head>
 <body>
-	<section class="hero is-primary">
+	  <section class="hero is-primary">
         <div class="hero-body">
           <div class="container">
             <h1 class="title">Data Table</h1>
@@ -126,47 +123,37 @@
             <h2 class="subtitle"><a href="{{ url_for('.configurations') }}"> Click Here for Configurations </a></h2>
           </div>
         </div>
-      </section>
-	</br>
-  <div class="row text-right" style="text-align: center;">
-    <button class="btn btn-primary button is-primary" id="btn-show-selected"> Show only Selected</button>
-    <button class="btn btn-primary button is-primary" id="btn-show-all"> Show All</button>    
-  </div>
-	<div>
-		<table id="albums" class="display compact table is-bordered " style="width:100%">
-	        <thead>
-      		    <th style="text-align:center">Name</th>
-              <th style="text-align:center">Artist</th>
-              <th style="text-align:center">Title</th>
-              <th style="text-align:center">Release Date</th>
-              <th style="text-align:center">Publisher</th>
-              <th style="text-align:center">Album Name</th>
-              <th style="text-align:center">Edit</th>
-	       	</thead>
-	        <tbody> 
-	        {% for row in table %}
-	            <tr>
-	               <td>{{row["name"]}}</td>
-	               <td>{{row["artist"]}}</td>
-	               <td>{{row["title"]}}</td>
-	               <td>{{row["release_date"]}}</td>
-	               <td>{{row["publisher"]}}</td>
-	               <td>{{row["album_name"]}}</td>
-	               <td><a href='/item/{{row["id"]}}'>Edit</a></td>  	
-	            </tr>
-	        {% endfor %}
-      		</tbody>
-      		<tfoot>
-      		    <th style="text-align:center">Name</th>
-              <th style="text-align:center">Artist</th>
-              <th style="text-align:center">Title</th>
-              <th style="text-align:center">Release Date</th>
-              <th style="text-align:center">Publisher</th>
-              <th style="text-align:center">Album Name</th>
-              <th style="text-align:center">Edit</th>
-	       	</tfoot>
+    </section>
+  	</br>
+    <div class="row text-right" style="text-align: center;">
+      <button class="btn btn-primary button is-primary" id="btn-show-selected"> Show only Selected</button>
+      <button class="btn btn-primary button is-primary" id="btn-show-all"> Show All</button>    
+    </div>
+	  <div>
+		    <table id="albums" class="display compact table is-bordered " style="width:100%">
+  	        <thead>
+                {% for key,value in table[0].items() %}
+                    <th style="text-align:center">{{key}}</th>
+                {% endfor %}
+                <th style="text-align:center">Edit</th>
+            </thead>
+  	        <tbody> 
+      	        {% for row in table %}
+      	            <tr>
+                       {% for key,value in row.items() %}
+                       <td>{{value}}</td>
 
+      	               {% endfor %}
+                       <td><a href='/item/{{row["id"]}}'>Edit</a></td>
+                    </tr>
+      	        {% endfor %}
+        		</tbody>
+        		<tfoot>
+        		    {% for key,value in table[0].items() %}
+                    <th style="text-align:center">{{key}}</th>
+                {% endfor %}
+                <th style="text-align:center">Edit</th>
+  	       	</tfoot>
       	</table>
     </div>
-
 </body>

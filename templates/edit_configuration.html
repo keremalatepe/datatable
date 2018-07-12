@@ -15,7 +15,7 @@
             <h2 class="subtitle"><a href="{{ url_for('.index') }}"> Click Here for Return Table </a></h2>
           </div>
         </div>
-      </section>
+    </section>
 
 {% from "_formhelpers.html" import render_field %}
 <form method=post>
@@ -31,7 +31,7 @@
         </div>
         <div class="column is-2">
         	{{ render_field(form.publisher) }}
-        </div>
+        </div> 
     	<div class="column is-2">
         	{{ render_field(form.album_name) }}
     	</div>

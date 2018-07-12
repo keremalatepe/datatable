@@ -16,15 +16,15 @@ init_db()
 def index():
     results = []
     results = db_session.query(Album)
-
-    return render_template('results.html', table=results)
+    a1 = table_as_dict(results)
+    return render_template('results.html', table=a1)
 
 @app.route('/configurations', methods=['GET', 'POST'])
 def configurations():
     results = []
     results = db_session.query(Configuration)
-
-    return render_template('configurations.html', table=results)    
+    a1 = table_as_dict_conf(results)
+    return render_template('configurations.html', table=a1)    
 
 
 
@@ -69,6 +69,7 @@ def edit(id):
 
     if album:
         form = AlbumForm(formdata=request.form, obj=album)
+        print(form)
         if request.method == 'POST' and form.validate():
             # save edits
             save_changes(album, form)
@@ -126,6 +127,39 @@ def configuration_type(form):
     configuration1 = qry2.first()
     return configuration1.artist
 
+def table_as_dict(table):
+    q = True
+    i = 1
+    a = []
+    while q: 
+        obj = table.filter(Album.id == i).first()
+        i+=1
+        if obj is None:
+            q = False
+            continue
+        obj_dict = object_as_dict(obj)
+        a.append(dict(obj_dict))
+    return a
+
+def table_as_dict_conf(table):
+    q = True
+    i = 1
+    a = []
+    while q: 
+        obj = table.filter(Configuration.id == i).first()
+        i+=1
+        if obj is None:
+            q = False
+            continue
+        obj_dict = object_as_dict(obj)
+        a.append(dict(obj_dict))
+    return a
+
+
+def object_as_dict(obj):
+    return {c.key: getattr(obj, c.key)
+            for c in inspect(obj).mapper.column_attrs}
+
 
 #conf eklendiginde data tablosunun guncellenebilmesi icin fonksiyon
 def reload_table():
@@ -170,9 +204,7 @@ def save_changes_configuration(configuration, form, new=False):
     reload_table()
 
 
-def object_as_dict(obj):
-    return {c.key: getattr(obj, c.key)
-            for c in inspect(obj).mapper.column_attrs}
+
 
 
 
