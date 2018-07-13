@@ -35,6 +35,7 @@ def new_album():
     """
     form = AlbumForm(request.form)
 
+
     if request.method == 'POST':
         # save the album
         album = Album()
@@ -66,10 +67,12 @@ def new_configuration():
 def edit(id):
     qry = db_session.query(Album).filter(Album.id==id)
     album = qry.first()
-
+    
     if album:
         form = AlbumForm(formdata=request.form, obj=album)
-        print(form)
+        print(form.album_name)
+        a = dict((key, request.form.get(key)) for key in request.form.keys())
+        print(a)
         if request.method == 'POST' and form.validate():
             # save edits
             save_changes(album, form)

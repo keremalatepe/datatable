@@ -76,7 +76,7 @@ A.2- Tabloda gerçekleşen tıklanmalar sonucu yapılacak şeyleri düzenleyen J
 A.3- Kullanıcının gördüğü yazı ve tabloların azıldığı HTML(HyperText Markup Language) kısmı. Burada main.py dosyasının içindeki index fonksiyonunda results.html çağırılırken kullanılan table değişkeni ile beraber geliyor. Tablo yazdirilirken de tek tek bu tabloyu yazmak yerine döngü ile beraber tüm tablo yazdırılıyor. 
 
 
-B- edit_album.html - edit_configuration.html:
+B- edit_album.html - edit_configuration.html - new_album.html - new_configuration.html: _formhelpers.html dosyasından verileri alarak formları ekrana yazdırır. editlemek için olan sayfalarda ise kutucukların içi halihazırda bulunan verilerle dolu olarak gelir. Sitenin tasarım kısmı ise Bulma CSS Framework ile yapılmıştır.   
 
 
 
