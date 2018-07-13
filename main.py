@@ -70,9 +70,6 @@ def edit(id):
     
     if album:
         form = AlbumForm(formdata=request.form, obj=album)
-        print(form.album_name)
-        a = dict((key, request.form.get(key)) for key in request.form.keys())
-        print(a)
         if request.method == 'POST' and form.validate():
             # save edits
             save_changes(album, form)
@@ -205,10 +202,6 @@ def save_changes_configuration(configuration, form, new=False):
     db_session.commit()
     #datatable in goncellenmesi icin fonksiyon cagiriliyor
     reload_table()
-
-
-
-
 
 
 #datatable a yeni eklenen veya guncellenen verinin kaydedilmesi icin
