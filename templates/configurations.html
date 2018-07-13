@@ -35,7 +35,7 @@
       //sutun sutun aramak icin
       $('#albums thead th').each( function () { 
           var title = $(this).text();
-          $(this).html( title + '</br><input type="text" class="input is-rounded is-small"   placeholder="Search '+title+'" style="width:80px"/>' );
+          $(this).html( title + '</br><input type="text" class="input is-rounded is-small"   placeholder="Search '+title+'" style="width:60px"/>' );
       } );
       var table = $('#albums').DataTable(
         {
@@ -137,10 +137,10 @@
                 {% for row in table %}
                     <tr>
                        {% for key,value in row.items() %}
-                       <td>{{value}}</td>
+                       <td style="text-align:center">{{value}}</td>
 
                        {% endfor %}
-                       <td><a href='/item/{{row["id"]}}'>Edit</a></td>
+                       <td style="text-align:center"><a href='/item/{{row["id"]}}'>Edit</a></td>
                     </tr>
                 {% endfor %}
             </tbody>
