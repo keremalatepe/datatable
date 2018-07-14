@@ -17,7 +17,7 @@ class Album(Base):
     name = Column(String)
     artist = Column(String)
     title = Column(String)
-    release_date = Column(String)
+    release_date = Column( )
     publisher = Column(String)
     album_name = Column(String)
 

@@ -78,12 +78,21 @@ def edit(id):
     else:
         return 'Error loading #{id}'.format(id=id)
 
+@app.route('/info/<int:id>', methods=['GET', 'POST'])
+def info(id):
+    qry = db_session.query(Album).filter(Album.id==id)
+    album = qry.first()
+    element = object_as_dict(album)
+    results_conf = []
+    results_conf = db_session.query(Configuration)
+    table1 = table_as_dict_conf(results_conf)
+    table = info_table(table1,element)
+    return render_template('info.html', table=table, element=element)
 
 #conf table editlenmesi icin fonksiyon
 @app.route('/item/configuration/<int:id>', methods=['GET', 'POST'])
 def edit_configuration(id):
-    qry = db_session.query(Configuration).filter(
-                Configuration.id==id)
+    qry = db_session.query(Configuration).filter(Configuration.id==id)
     configuration = qry.first()
 
     if configuration:
@@ -126,6 +135,23 @@ def configuration_type(form):
     qry2 = db_session.query(Configuration).filter(Configuration.id == conf_type)
     configuration1 = qry2.first()
     return configuration1.artist
+
+def info_table(table, element):
+    
+    for row in table:
+        i = 0;
+        for key in set(row) & set(element):
+            if row[key] == element[key]:
+                i += 1
+                a = [1]
+                a.append(row[key])
+                row[key] = a
+            else:
+                a = [0]
+                a.append(row[key])
+                row[key] = a 
+        row["id"][0] = i
+    return table
 
 def table_as_dict(table):
     q = True
@@ -176,6 +202,10 @@ def reload_table():
         i += 1
         album.name = configuration_type(album1)
         db_session.commit()
+
+
+    
+
 
 #conf tablea a yeni eklenen veya guncellenen verinin kaydedilmesi icin
 def save_changes_configuration(configuration, form, new=False):

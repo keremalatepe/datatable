@@ -136,6 +136,7 @@
                     <th style="text-align:center">{{key}}</th>
                 {% endfor %}
                 <th style="text-align:center">Edit</th>
+                <th style="text-align:center">Info</th>
             </thead>
   	        <tbody> 
       	        {% for row in table %}
@@ -145,6 +146,7 @@
 
       	               {% endfor %}
                        <td style="text-align:center"><a href='/item/{{row["id"]}}'>Edit</a></td>
+                       <td style="text-align:center"><a href='/info/{{row["id"]}}'>Info</a></td>
                     </tr>
       	        {% endfor %}
         		</tbody>
@@ -153,7 +155,8 @@
                     <th style="text-align:center">{{key}}</th>
                 {% endfor %}
                 <th style="text-align:center">Edit</th>
-  	       	</tfoot>
+                <th style="text-align:center">Info</th>
+                </tfoot>
       	</table>
     </div>
 </body>
