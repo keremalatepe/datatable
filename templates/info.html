@@ -2,9 +2,22 @@
 <html lang="en">
 <head>
   <style>
-	div.dataTables_wrapper {
+
+  div.dataTables_wrapper {
         margin: 0 auto;
     }
+  table.dataTable tbody tr.selected{
+    background-color: #DAE1E7 !important;
+  }
+  table.dataTable.display tbody tr:hover.selected>.sorting_1, table.dataTable.order-column.hover tbody tr:hover.selected>.sorting_1{
+    background-color: #DAE1E7 !important;
+  }
+  table.dataTable.display tbody tr.odd.selected>.sorting_1, table.dataTable.order-column.stripe tbody tr.odd.selected>.sorting_1 {
+    background-color: #DAE1E7 !important;
+  }
+  table.dataTable.display tbody tr.even.selected>.sorting_1, table.dataTable.order-column.stripe tbody tr.even.selected>.sorting_1{
+    background-color: #DAE1E7 !important;
+  }
   </style>
   
 
@@ -38,7 +51,6 @@
       } );
       var table = $('#albums').DataTable(
         {
-          stateSave: true,
           dom: 'Bfrtip',
           lengthMenu: [
             [ 10, 25, 50, -1 ],

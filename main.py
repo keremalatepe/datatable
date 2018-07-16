@@ -141,7 +141,8 @@ def info_table(table, element):
     for row in table:
         i = 0;
         for key in set(row) & set(element):
-            if row[key] == element[key]:
+            if row[key] == element[key] and key != 'id':
+                print(key, row[key])
                 i += 1
                 a = [1]
                 a.append(row[key])
@@ -202,9 +203,6 @@ def reload_table():
         i += 1
         album.name = configuration_type(album1)
         db_session.commit()
-
-
-    
 
 
 #conf tablea a yeni eklenen veya guncellenen verinin kaydedilmesi icin

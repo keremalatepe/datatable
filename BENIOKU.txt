@@ -64,6 +64,9 @@ Genel hatlarıyla dosyalar:
 
 6.k- object_as_dict(): Üretilmiş olan album-configuration objeleri dictionary'e çevirmek için bulunur. 
 
+6.l- info(): fonskiyonun amaci istenilen satirin tum konfigurasyonlarla beraber baska bir tabloda gosterilerek ortak olan ozelliklerin farkli renkte gosterilmesi ve karsilastirmayi kolaylastirmak. Fonksiyon satir verisini ve konfigurasyon tablosunu dictionary'e cevirerek info_table fonksiyonuna gonderiyor. 
+
+6.m- info_table(): Secilen satir ve konfigurasyon tablosundaki ayni olan hucrelerin deger kismina 1 farkli olanlara 0 degiskenini ekler ve html dosyasinda renkledirirken kullanir. 
 
 HTML DOSYALARI
 
@@ -79,7 +82,7 @@ A.3- Kullanıcının gördüğü yazı ve tabloların azıldığı HTML(HyperTex
 B- edit_album.html - edit_configuration.html - new_album.html - new_configuration.html: _formhelpers.html dosyasından verileri alarak formları ekrana yazdırır. editlemek için olan sayfalarda ise kutucukların içi halihazırda bulunan verilerle dolu olarak gelir. Sitenin tasarım kısmı ise Bulma CSS Framework ile yapılmıştır.   
 
 
-
+C- info.html: Ilk bastaki CSS ve JS kisimlari A kismindaki dosyalarla ayni. Tablonun amaci secilmis olan album dosyasindaki satir ile konfigurasyon tablosuyla birlikte ayri tablo yaparak ayni olan hucreleri farkli yerde gostermek. 
 
 
 
